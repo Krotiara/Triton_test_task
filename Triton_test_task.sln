@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triton_test_task", "Triton_test_task.csproj", "{645F04F6-018A-4C95-A9AA-3824093ACC5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{645F04F6-018A-4C95-A9AA-3824093ACC5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{645F04F6-018A-4C95-A9AA-3824093ACC5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{645F04F6-018A-4C95-A9AA-3824093ACC5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{645F04F6-018A-4C95-A9AA-3824093ACC5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D4FF710-98D1-4515-B67C-AF138CAAD063}
+	EndGlobalSection
+EndGlobal
