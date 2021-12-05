@@ -5,35 +5,23 @@ using System.Threading.Tasks;
 
 namespace Triton_test_task.Models
 {
-    public class Device
+    public class Device: IDevice
     {
-        public Device(int id, int value, int lowerTheshold, int upperThreshold)
+
+        public Device()
         {
-            Id = id;
-            CurrentValue = value;
-            LowerThreshold = lowerTheshold;
-            UpperThreshold = upperThreshold;
+            Params = new Dictionary<string, string>();
         }
 
         public int Id { get; set; }
 
-        public int CurrentValue { get; set; }
+        public Dictionary<string, string> Params { get; set; }
 
-        public int LowerThreshold { get; set; }
-
-        public int UpperThreshold { get; set; }
-
-        public void Update(int value)
+        public void Update(byte[] receivedData)
         {
-            Update(value, LowerThreshold, UpperThreshold);
+            throw new NotImplementedException();
         }
 
-        public void Update(int value, int lowerTheshold, int upperThreshold)
-        {
-            CurrentValue = value;
-            LowerThreshold = lowerTheshold;
-            UpperThreshold = upperThreshold;
-        }
-
+       
     }
 }

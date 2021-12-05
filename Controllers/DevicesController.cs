@@ -8,14 +8,15 @@ namespace Triton_test_task.Models
 {
     public class DevicesController: Controller
     {
-        private Dictionary<int, Device> devices;
+
         private readonly INetworkHandler networkHandler;
+        private readonly DevicesHandler<IDevice> devicesHandler;
 
         public DevicesController(INetworkHandler networkHandler)
         {
-            devices = new Dictionary<int, Device>();
-            this.networkHandler = networkHandler;
-            Task.Run(() => networkHandler.Listen(UpdateDevice));
+            this.networkHandler = networkHandler; 
+            this.devicesHandler = new DevicesHandler<IDevice>(); //Как вместо IDevice передать Device, если не делать DevicesHandler через интерфейс?
+            Task.Run(() => ProcessTheDeviceMessage());
         }
 
         public IActionResult Index()
@@ -41,9 +42,12 @@ namespace Triton_test_task.Models
             //TODO
         }
 
-        private void UpdateDevice(byte[] deviceData)
+        private void ProcessTheDeviceMessage()
         {
-
+            foreach (byte[] data in networkHandler.Listen()) //А если не будет даты?
+            {
+                devicesHandler.ProcessData(data);
+            }
         }
 
     }

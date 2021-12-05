@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Triton_test_task.Models;
 
 namespace Triton_test_task
 {
@@ -29,6 +30,7 @@ namespace Triton_test_task
             {
                 return new UDPHandler(udpListenPort, udpSendPort);
             });
+            services.AddSingleton<IDevice, Device>();
             services.AddControllersWithViews();
         }
 

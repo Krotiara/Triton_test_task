@@ -5,12 +5,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Triton_test_task
+namespace Triton_test_task.Models
 {
     public class UDPHandler: INetworkHandler
     {
         private int listenPort;
         private int sendPort;
+        
+        public bool IsListen { get; set; }
 
         public UDPHandler(int listenPort, int sendPort)
         {
@@ -18,25 +20,29 @@ namespace Triton_test_task
             this.sendPort = sendPort;
         }
 
-        public void Listen(Action<byte[]> getDataAction)
+        //public UdpClient SetConnectionParams(IPAddress Ip, int port)
+        //{
+        //    UdpClient client = new UdpClient();
+        //    client.Connect(Ip, port);   
+        //    return client;
+        //}
+
+        public IEnumerable<byte[]> Listen()
         {
             IPEndPoint broadcastEndPoint = new IPEndPoint(IPAddress.Broadcast, listenPort);
-            using(UdpClient listener = new UdpClient(listenPort))
+            using (UdpClient listener = new UdpClient(listenPort))
             {
-                try
+                IsListen = true;
+                while (IsListen)
                 {
                     byte[] bytes = listener.Receive(ref broadcastEndPoint);
-                    getDataAction(bytes);
-                }
-                catch(SocketException e)
-                {
-                    Console.WriteLine(e); //Убрать
+                    yield return bytes;
                 }
             }
         }
 
 
-        public void Send(byte[] data)
+        public byte[] Send(byte[] data)
         {
             throw new NotImplementedException();
         }
