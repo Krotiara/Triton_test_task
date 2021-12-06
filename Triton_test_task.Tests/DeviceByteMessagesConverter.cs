@@ -8,12 +8,12 @@ namespace Triton_test_task.Tests
 {
     public static class DeviceByteMessagesConverter
     {
-        public static byte[] GenerateTestDeviceValues(int id, short lowerThreshold, short upperThreshold)
+        public static byte[] GenerateTestDeviceValues(int id, short firstParameter, short secondParameter)
         {
             byte[] idb = BitConverter.GetBytes(id);
-            byte[] lowerThresholdb = BitConverter.GetBytes(lowerThreshold);
-            byte[] upperThresholdb = BitConverter.GetBytes(upperThreshold);
-            byte[] messageBody = idb.Concat(lowerThresholdb).Concat(upperThresholdb).ToArray();
+            byte[] firstParameterb = BitConverter.GetBytes(firstParameter);
+            byte[] secondParameterb = BitConverter.GetBytes(secondParameter);
+            byte[] messageBody = idb.Concat(firstParameterb).Concat(secondParameterb).ToArray();
             return messageBody;
         }
 
@@ -22,13 +22,14 @@ namespace Triton_test_task.Tests
             byte[] idb = BitConverter.GetBytes(id);
             byte[] commandb = Encoding.ASCII.GetBytes(command);
             byte[] commandStatusb = BitConverter.GetBytes(commandStatus);
-            byte[] lowerThresholdb = BitConverter.GetBytes(lowerThreshold);
             byte[] upperThresholdb = BitConverter.GetBytes(upperThreshold);
+            byte[] lowerThresholdb = BitConverter.GetBytes(lowerThreshold);
+           
             byte[] messageBody = idb
                 .Concat(commandb)
                 .Concat(commandStatusb)
-                .Concat(lowerThresholdb)
                 .Concat(upperThresholdb)
+                .Concat(lowerThresholdb)
                 .ToArray();
             return messageBody;
         }

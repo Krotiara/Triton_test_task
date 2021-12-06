@@ -51,28 +51,44 @@ namespace Triton_test_task.Tests
         [Fact]
         public void GetAnswerMessageFromSendingTest()
         {
+            Device device = GetDeviceByFirstRecieve();
+            Dictionary<string, string> parameters = new Dictionary<string, string>() {
+                { "lower threshold", "10" },
+                { "upper threshold", "200" } };
+            
+            udpHandler.Send(device.CreateMessage("LW", parameters)); //И как тестить изменения?
+            byte[] answer = udpHandler.Receive();
+            Assert.True(answer.Length == 12);
+
+            udpHandler.Send(device.CreateMessage("LR"));
+            answer = udpHandler.Receive();
+            Assert.True(answer.Length == 12);
+
+        }
+
+
+        [Fact]
+        public void SetDataBySendTest()
+        {
+            Device device = GetDeviceByFirstRecieve();
+            Dictionary<string, string> parameters = new Dictionary<string, string>() {
+                { "lower threshold", "10" },
+                { "upper threshold", "200" } };
+            udpHandler.Send(device.CreateMessage("LW", parameters)); //И как тестить изменения?
+            byte[] answer = udpHandler.Receive();
+            devicesHandler.ProcessData(answer);
+            Assert.True(device.Params["lower threshold"] == "10");
+            Assert.True(device.Params["upper threshold"] == "200");
+        }
+
+
+        private Device GetDeviceByFirstRecieve()
+        {
             byte[] deviceData = udpHandler.Receive();
             devicesHandler.ProcessData(deviceData);
             Device device = devicesHandler.Devices.First().Value;
-            Dictionary<string, string> parameters = new Dictionary<string, string>() {
-                { "lower threshold", "10" },
-                { "upper threshold", "100" } };
-            udpHandler.Send(device.CreateMessage("WR", parameters)); //И как тестить изменения?
-
-            bool isGettingAnswer = false;
-            int waitingMessagesCount = 30;
-            foreach (byte[] data in udpHandler.Listen())
-            {
-                if (waitingMessagesCount == 0)
-                    udpHandler.StopListen();
-                if (data.Length == 12)
-                {
-                    isGettingAnswer = true;
-                    udpHandler.StopListen();
-                }
-                waitingMessagesCount--;
-            }
-            Assert.True(isGettingAnswer);
+            return device;
         }
+
     }
 }

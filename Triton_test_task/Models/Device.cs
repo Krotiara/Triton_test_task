@@ -28,31 +28,31 @@ namespace Triton_test_task.Models
                     return BitConverter.GetBytes(Id)
                         .Concat(Encoding.ASCII.GetBytes(type))
                         .ToArray();
-                case "WR":
+                case "LW":
                     if (parameters == null)
-                        throw new MessageCreationException(string.Format("Parameters for message type WR in class {0} cant be null", GetType().ToString()));
-                    return CreateWRMessageType(parameters);
+                        throw new MessageCreationException(string.Format("Parameters for message type LW in class {0} cant be null", GetType().ToString()));
+                    return CreateLWMessageType(parameters);
             }
             throw new MessageCreationException(string.Format("CreateMessage method in class {0} dont know  message type = {1}", GetType().ToString(), type));
         }
 
-        private byte[] CreateWRMessageType(Dictionary<string, string> parameters)
+        private byte[] CreateLWMessageType(Dictionary<string, string> parameters)
         {
             try
             {
                 byte[] idb = BitConverter.GetBytes(Id);
-                byte[] commandb = Encoding.ASCII.GetBytes("WR");
-                byte[] lowerThreshold = BitConverter.GetBytes(Int16.Parse(parameters["lower threshold"]));
+                byte[] commandb = Encoding.ASCII.GetBytes("LW");
                 byte[] upperThreshold = BitConverter.GetBytes(Int16.Parse(parameters["upper threshold"]));
+                byte[] lowerThreshold = BitConverter.GetBytes(Int16.Parse(parameters["lower threshold"]));
                 return idb
                        .Concat(commandb)
-                       .Concat(lowerThreshold)
                        .Concat(upperThreshold)
+                       .Concat(lowerThreshold)
                        .ToArray();
             }
             catch(KeyNotFoundException)
             {
-                throw new MessageCreationException(string.Format("In class {0} in CreateMessage type WR parameters are wrong." +
+                throw new MessageCreationException(string.Format("In class {0} in CreateMessage type LW parameters are wrong." +
                     " It must be lower threshold and upper threshold", GetType().ToString()));
             }
         }
@@ -78,8 +78,8 @@ namespace Triton_test_task.Models
         private void ProcessDataPackage(byte[] receivedData)
         {
             int id = BitConverter.ToInt32(receivedData, 0);
-            Params["lower parameter"] = BitConverter.ToInt16(receivedData, 4).ToString();
-            Params["upper parameter"] = BitConverter.ToInt16(receivedData, 6).ToString();
+            Params["first parameter"] = BitConverter.ToInt16(receivedData, 4).ToString();
+            Params["second parameter"] = BitConverter.ToInt16(receivedData, 6).ToString();
         }
 
 
@@ -91,10 +91,10 @@ namespace Triton_test_task.Models
         private void ProcessRequeryAnswer(byte[] receivedData)
         {
             int id = BitConverter.ToInt32(receivedData, 0);
-            string command = BitConverter.ToString(receivedData, 4, 2);
+            string command = BitConverter.ToString(receivedData, 4, 2); //command парсится не в исходный вид
             short commandStatus = BitConverter.ToInt16(receivedData,6);
-            int lowerThreshold = BitConverter.ToInt16(receivedData, 8);
-            int upperThreshold = BitConverter.ToInt16(receivedData, 10);
+            int upperThreshold = BitConverter.ToInt16(receivedData, 8);
+            int lowerThreshold = BitConverter.ToInt16(receivedData, 10);
 
             switch (commandStatus)
             {

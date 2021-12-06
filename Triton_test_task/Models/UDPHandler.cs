@@ -20,8 +20,8 @@ namespace Triton_test_task.Models
         {
             this.ListenPort = listenPort;
             this.SendPort = sendPort;
-            ListenEndPoint = new IPEndPoint(IPAddress.Broadcast, listenPort);
-            SendEndPoint = new IPEndPoint(IPAddress.Broadcast, sendPort);
+            ListenEndPoint = new IPEndPoint(IPAddress.Loopback, listenPort);
+            SendEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
         }
 
 
@@ -51,8 +51,8 @@ namespace Triton_test_task.Models
 
         public int Send(byte[] data)
         {    
-            using (UdpClient sender = new UdpClient(ListenPort))
-            {
+            using (UdpClient sender = new UdpClient())
+            {            
                 return sender.Send(data, data.Length, SendEndPoint);
             }
         }

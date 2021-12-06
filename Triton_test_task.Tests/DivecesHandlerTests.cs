@@ -39,8 +39,8 @@ namespace Triton_test_task.Tests
             devicesHandler.Add(1, DeviceByteMessagesConverter.GenerateTestDeviceValues(1,10,100));
             Assert.Single(devicesHandler.Devices);
             Device device = devicesHandler.Get(1);
-            Assert.Equal("10", device.Params["lower parameter"]);
-            Assert.Equal("100", device.Params["upper parameter"]);
+            Assert.Equal("10", device.Params["first parameter"]);
+            Assert.Equal("100", device.Params["second parameter"]);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Triton_test_task.Tests
                 { "lower threshold", "10" }, 
                 { "upper threshold", "100" } };
 
-            Assert.Equal(10, device.CreateMessage("WR", parameters).Length);
+            Assert.Equal(10, device.CreateMessage("LW", parameters).Length);
         }
 
         [Fact]
@@ -62,14 +62,14 @@ namespace Triton_test_task.Tests
             Device device = new Device() { Id = 1 };
             Dictionary<string, string> parameters = new Dictionary<string, string>() {
                 { "wrong parameter", "10" }};
-            Assert.Throws<MessageCreationException>(() => device.CreateMessage("WR", parameters));
+            Assert.Throws<MessageCreationException>(() => device.CreateMessage("LW", parameters));
         }
 
         [Fact]
         public void CreateWRMessageWithoutParametersTest()
         {
             Device device = new Device() { Id = 1 };
-            Assert.Throws<MessageCreationException>(() => device.CreateMessage("WR"));
+            Assert.Throws<MessageCreationException>(() => device.CreateMessage("LW"));
         }
 
 
@@ -84,8 +84,8 @@ namespace Triton_test_task.Tests
             byte[] updateValuesData = DeviceByteMessagesConverter.GenerateTestDeviceValues(1, testLowerParameter, testUpperParameter);
             
             devicesHandler.Update(1, updateValuesData);
-            Assert.Equal(testLowerParameter.ToString(), device.Params["lower parameter"]);
-            Assert.Equal(testUpperParameter.ToString(), device.Params["upper parameter"]);
+            Assert.Equal(testLowerParameter.ToString(), device.Params["first parameter"]);
+            Assert.Equal(testUpperParameter.ToString(), device.Params["second parameter"]);
         }
 
 
@@ -97,7 +97,7 @@ namespace Triton_test_task.Tests
             short testLowerThreshold = 50;
             short testUpperThreshold = 80;
             short status = Convert.ToInt16("0x0000", 16); // hex to Int32
-            byte[] answerData = DeviceByteMessagesConverter.GenerateTestDeviceAnswer(1, "WR", status, testLowerThreshold, testUpperThreshold);
+            byte[] answerData = DeviceByteMessagesConverter.GenerateTestDeviceAnswer(1, "LW", status, testLowerThreshold, testUpperThreshold);
             devicesHandler.Update(1, answerData);
             Assert.Equal(testLowerThreshold.ToString(), device.Params["lower threshold"]);
             Assert.Equal(testUpperThreshold.ToString(), device.Params["upper threshold"]);
@@ -111,7 +111,7 @@ namespace Triton_test_task.Tests
             short testLowerThreshold = 50;
             short testUpperThreshold = 80;
             short status = Convert.ToInt16("0x000F", 16); // hex to Int32
-            byte[] answerData = DeviceByteMessagesConverter.GenerateTestDeviceAnswer(1, "WR", status, testLowerThreshold, testUpperThreshold);
+            byte[] answerData = DeviceByteMessagesConverter.GenerateTestDeviceAnswer(1, "LW", status, testLowerThreshold, testUpperThreshold);
             Assert.Throws<MessageAnswerException>(() => devicesHandler.Update(1, answerData));
         }
     }
