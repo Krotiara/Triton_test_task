@@ -10,12 +10,12 @@ namespace Triton_test_task.Models
     {
 
         private readonly INetworkHandler networkHandler;
-        private readonly DevicesHandler<IDevice> devicesHandler;
+        private readonly DevicesHandler<Device> devicesHandler;
 
         public DevicesController(INetworkHandler networkHandler)
         {
             this.networkHandler = networkHandler; 
-            this.devicesHandler = new DevicesHandler<IDevice>(); //Как вместо IDevice передать Device, если не делать DevicesHandler через интерфейс?
+            this.devicesHandler = new DevicesHandler<Device>(); //without DI for now.
             Task.Run(() => ProcessTheDeviceMessage());
         }
 

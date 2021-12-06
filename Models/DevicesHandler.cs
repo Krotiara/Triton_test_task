@@ -13,20 +13,29 @@ namespace Triton_test_task.Models
             Devices = new Dictionary<int, T>();
         }
 
-        public Dictionary<int, T> Devices { get; set; }
+        private Dictionary<int, T> Devices { get; }
 
-        public void ProcessData(byte[] recievedData)
+        public void ProcessData(byte[] deviceData)
         {
-            int id = GetId(recievedData);
-            if (Devices.ContainsKey(id))
-                Devices[id].Update(recievedData);
-            else
-            {
-                T entry = (T)Activator.CreateInstance(typeof(T));
-                entry.Id = id;
-                Devices[id] = entry;
-              
-            }
+            int id = GetId(deviceData);
+            if (!Devices.ContainsKey(id))
+                Add(id, deviceData);
+            Update(id, deviceData);  
+        }
+
+        public T Add(int id, byte[] deviceData)
+        {
+            T entry = (T)Activator.CreateInstance(typeof(T));
+            entry.Id = id;
+            Devices[id] = entry;
+            entry.Update(deviceData);
+            return entry;
+        }
+
+        public T Update(int id, byte[] deviceData)
+        {
+            Devices[id].Update(deviceData);
+            return Devices[id];
         }
 
         private int GetId(byte[] receivedData)
