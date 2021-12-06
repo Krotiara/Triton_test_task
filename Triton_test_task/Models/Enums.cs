@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 
 namespace Triton_test_task.Models
 {
-    public class MessageCreationException: Exception
+    public class Enums
     {
-        public MessageCreationException(string errorMessage)
+        public enum DeviceCommandStatusCodes
         {
-
+            Successes = 0,
+            WrongData = 15,
+            UnknownError = 255
         }
     }
 }

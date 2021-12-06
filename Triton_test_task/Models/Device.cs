@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Triton_test_task.Models.Enums;
 
 namespace Triton_test_task.Models
 {
@@ -41,7 +42,7 @@ namespace Triton_test_task.Models
             {
                 byte[] idb = BitConverter.GetBytes(Id);
                 byte[] commandb = Encoding.ASCII.GetBytes("WR");
-                byte[] lowerThreshold = BitConverter.GetBytes(Int16.Parse(parameters["lower threshold"])); // checkIfWrongKey
+                byte[] lowerThreshold = BitConverter.GetBytes(Int16.Parse(parameters["lower threshold"]));
                 byte[] upperThreshold = BitConverter.GetBytes(Int16.Parse(parameters["upper threshold"]));
                 return idb
                        .Concat(commandb)
@@ -91,21 +92,22 @@ namespace Triton_test_task.Models
         {
             int id = BitConverter.ToInt32(receivedData, 0);
             string command = BitConverter.ToString(receivedData, 4, 2);
-            string commandStatus = BitConverter.ToString(receivedData,6,2).Replace("-", "");
+            short commandStatus = BitConverter.ToInt16(receivedData,6);
             int lowerThreshold = BitConverter.ToInt16(receivedData, 8);
             int upperThreshold = BitConverter.ToInt16(receivedData, 10);
 
             switch (commandStatus)
             {
-                case "0x0000": // Successes
+                case (short)DeviceCommandStatusCodes.Successes:
                     Params["lower threshold"] = lowerThreshold.ToString();
                     Params["upper threshold"] = upperThreshold.ToString();
                     break;
-                case "0x000F": // WrongData
-                    break;
-                case "0x00FF": //Unknown Error
-                    break;
+                case (short)DeviceCommandStatusCodes.WrongData or (short)DeviceCommandStatusCodes.UnknownError:
+                    throw new MessageAnswerException(string.Format("Error command status: {0}",
+                        ((DeviceCommandStatusCodes)commandStatus).ToString()));
             }
         }
     }
+
+   
 }

@@ -26,13 +26,11 @@ namespace Triton_test_task.Tests
             return messageBody;
         }
 
-        private byte[] GenerateTestAnswer(int id, string command, string commandStatus, short lowerThreshold, short upperThreshold)
+        private byte[] GenerateTestAnswer(int id, string command, short commandStatus, short lowerThreshold, short upperThreshold)
         {
             byte[] idb = BitConverter.GetBytes(id);
             byte[] commandb = Encoding.ASCII.GetBytes(command);
-            byte[] status = HexStringToByteArray(commandStatus);
-            
-            byte[] commandStatusb = Convert.FromHexString(commandStatus);
+            byte[] commandStatusb = BitConverter.GetBytes(commandStatus);
             byte[] lowerThresholdb = BitConverter.GetBytes(lowerThreshold);
             byte[] upperThresholdb = BitConverter.GetBytes(upperThreshold);
             byte[] messageBody = idb
@@ -42,14 +40,6 @@ namespace Triton_test_task.Tests
                 .Concat(upperThresholdb)
                 .ToArray();
             return messageBody;
-        }
-
-        private  byte[] HexStringToByteArray(string hex)
-        {
-            return Enumerable.Range(0, hex.Length)
-                             .Where(x => x % 2 == 0)
-                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                             .ToArray();
         }
 
 
@@ -131,10 +121,23 @@ namespace Triton_test_task.Tests
             Device device = devicesHandler.Get(1);
             short testLowerThreshold = 50;
             short testUpperThreshold = 80;
-            byte[] answerData = GenerateTestAnswer(1, "WR", "0x0000", testLowerThreshold, testUpperThreshold);
+            short status = Convert.ToInt16("0x0000", 16); // hex to Int32
+            byte[] answerData = GenerateTestAnswer(1, "WR", status, testLowerThreshold, testUpperThreshold);
             devicesHandler.Update(1, answerData);
             Assert.Equal(testLowerThreshold.ToString(), device.Params["lower threshold"]);
             Assert.Equal(testUpperThreshold.ToString(), device.Params["upper threshold"]);
+        }
+
+        [Fact]
+        public void UpdateDeviceThresholdsWithErrorCode()
+        {
+            devicesHandler.Add(1, GenerateTestDeviceValues(1, 10, 100));
+            Device device = devicesHandler.Get(1);
+            short testLowerThreshold = 50;
+            short testUpperThreshold = 80;
+            short status = Convert.ToInt16("0x000F", 16); // hex to Int32
+            byte[] answerData = GenerateTestAnswer(1, "WR", status, testLowerThreshold, testUpperThreshold);
+            Assert.Throws<MessageAnswerException>(() => devicesHandler.Update(1, answerData));
         }
     }
 }
