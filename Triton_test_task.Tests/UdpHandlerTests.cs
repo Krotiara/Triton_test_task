@@ -24,6 +24,7 @@ namespace Triton_test_task.Tests
         public void DataRecieveTest()
         {
             byte[] data = udpHandler.Receive();
+
             Assert.True(data.Length > 0);    
         }
 
@@ -33,19 +34,21 @@ namespace Triton_test_task.Tests
             devicesHandler.Add(1, DeviceByteMessagesConverter.GenerateTestDeviceValues(1, 10, 100));
             Device device = devicesHandler.Get(1);
             byte[] message = device.CreateMessage("LR");
+
             int sendedBytes = udpHandler.Send(message);
+
             Assert.True(sendedBytes > 0);   
         }
 
         [Fact]
         public void CreateDeviceByDataRecieveTest()
         {
-            foreach (byte[] data in udpHandler.Listen())
-            {
-                devicesHandler.ProcessData(data);
-                Assert.Single(devicesHandler.Devices);
-                udpHandler.StopListen();
-            }
+            byte[] data = udpHandler.Receive();
+
+            devicesHandler.ProcessData(data);
+
+            Assert.Single(devicesHandler.Devices);  
+            
         }
 
         [Fact]
@@ -56,14 +59,15 @@ namespace Triton_test_task.Tests
                 { "lower threshold", "10" },
                 { "upper threshold", "200" } };
             
-            udpHandler.Send(device.CreateMessage("LW", parameters)); //И как тестить изменения?
+            udpHandler.Send(device.CreateMessage("LW", parameters));
             byte[] answer = udpHandler.Receive();
+
             Assert.True(answer.Length == 12);
 
             udpHandler.Send(device.CreateMessage("LR"));
             answer = udpHandler.Receive();
-            Assert.True(answer.Length == 12);
 
+            Assert.True(answer.Length == 12);
         }
 
 
@@ -74,9 +78,11 @@ namespace Triton_test_task.Tests
             Dictionary<string, string> parameters = new Dictionary<string, string>() {
                 { "lower threshold", "10" },
                 { "upper threshold", "200" } };
+
             udpHandler.Send(device.CreateMessage("LW", parameters)); //И как тестить изменения?
             byte[] answer = udpHandler.Receive();
             devicesHandler.ProcessData(answer);
+
             Assert.True(device.Params["lower threshold"] == "10");
             Assert.True(device.Params["upper threshold"] == "200");
         }
