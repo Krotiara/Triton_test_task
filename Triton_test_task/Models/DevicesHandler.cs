@@ -13,7 +13,7 @@ namespace Triton_test_task.Models
             Devices = new Dictionary<int, T>();
         }
 
-        private Dictionary<int, T> Devices { get; }
+        public Dictionary<int, T> Devices { get; }
 
         public void ProcessData(byte[] deviceData)
         {
@@ -23,18 +23,23 @@ namespace Triton_test_task.Models
             Update(id, deviceData);  
         }
 
+        public T Get(int id)
+        {
+            return Devices.ContainsKey(id) ? Devices[id] : default(T);
+        }
+
         public T Add(int id, byte[] deviceData)
         {
             T entry = (T)Activator.CreateInstance(typeof(T));
             entry.Id = id;
             Devices[id] = entry;
-            entry.Update(deviceData);
+            entry.ProcessMessage(deviceData);
             return entry;
         }
 
         public T Update(int id, byte[] deviceData)
         {
-            Devices[id].Update(deviceData);
+            Devices[id].ProcessMessage(deviceData);
             return Devices[id];
         }
 
@@ -42,5 +47,6 @@ namespace Triton_test_task.Models
         {
             return BitConverter.ToInt32(receivedData, 0);
         }
+
     }
 }

@@ -10,7 +10,9 @@ namespace Triton_test_task.Models
         public int Id { get; set; }
 
         public Dictionary<string, string> Params { get; set; }
-        public void Update(byte[] receivedData);
+        public void ProcessMessage(byte[] receivedData);
+
+        public byte[] CreateMessage(string type, Dictionary<string, string> parameters);
 
     }
 }
