@@ -13,5 +13,7 @@ namespace Triton_test_task.Models
             WrongData = 15,
             UnknownError = 255
         }
+
+       
     }
 }

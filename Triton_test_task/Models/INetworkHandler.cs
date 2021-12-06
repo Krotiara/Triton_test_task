@@ -13,7 +13,7 @@ namespace Triton_test_task.Models
         /// 
         /// </summary>
         /// <param name="data"></param>
-        /// <returns>Return answer for sending query</returns>
-        public byte[] Send(byte[] data);
+        /// <returns>Return number of sended bytes</returns>
+        public int Send(byte[] data);
     }
 }

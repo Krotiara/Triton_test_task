@@ -9,42 +9,52 @@ namespace Triton_test_task.Models
 {
     public class UDPHandler: INetworkHandler
     {
-        private int listenPort;
-        private int sendPort;
-        
-        public bool IsListen { get; set; }
+        public int ListenPort { get; }
+        public int SendPort { get; }
+        public IPEndPoint ListenEndPoint { get; }
+        public IPEndPoint SendEndPoint { get; }
+
+        private bool isListen;
 
         public UDPHandler(int listenPort, int sendPort)
         {
-            this.listenPort = listenPort;
-            this.sendPort = sendPort;
+            this.ListenPort = listenPort;
+            this.SendPort = sendPort;
+            ListenEndPoint = new IPEndPoint(IPAddress.Broadcast, listenPort);
+            SendEndPoint = new IPEndPoint(IPAddress.Broadcast, sendPort);
         }
 
-        //public UdpClient SetConnectionParams(IPAddress Ip, int port)
-        //{
-        //    UdpClient client = new UdpClient();
-        //    client.Connect(Ip, port);   
-        //    return client;
-        //}
 
         public IEnumerable<byte[]> Listen()
         {
-            IPEndPoint broadcastEndPoint = new IPEndPoint(IPAddress.Broadcast, listenPort);
-            using (UdpClient listener = new UdpClient(listenPort))
+            isListen = true;
+            while (isListen)
             {
-                IsListen = true;
-                while (IsListen)
-                {
-                    byte[] bytes = listener.Receive(ref broadcastEndPoint);
-                    yield return bytes;
-                }
+                yield return Receive();
             }
         }
 
-
-        public byte[] Send(byte[] data)
+        public byte[] Receive()
         {
-            throw new NotImplementedException();
+            using (UdpClient listener = new UdpClient(ListenPort))
+            {
+                IPEndPoint listenEndPoint = ListenEndPoint;
+                return listener.Receive(ref listenEndPoint);
+            }
+        }
+
+        public void StopListen()
+        {
+            isListen = false;
+        }
+
+
+        public int Send(byte[] data)
+        {    
+            using (UdpClient sender = new UdpClient(ListenPort))
+            {
+                return sender.Send(data, data.Length, SendEndPoint);
+            }
         }
     }
 }
