@@ -10,20 +10,18 @@ namespace Triton_test_task.Models
     {
 
         private readonly INetworkHandler networkHandler;
-        private readonly DevicesHandler<Device> devicesHandler;
+        private readonly IDeviceContext deviceContext;
 
-        public DevicesController(INetworkHandler networkHandler)
+        public DevicesController(INetworkHandler networkHandler, IDeviceContext deviceContext)
         {
-            this.networkHandler = networkHandler; 
-            this.devicesHandler = new DevicesHandler<Device>(); //without DI for now.
+            this.networkHandler = networkHandler;
+            this.deviceContext = deviceContext;
             Task.Run(() => ProcessTheDeviceMessage());
         }
 
         public IActionResult Index()
         {
-            return View();
-            //throw new NotImplementedException();
-            //Каждый девайс - PartialView
+            return View("Index");
         }
 
        
@@ -46,8 +44,8 @@ namespace Triton_test_task.Models
         {
             foreach (byte[] data in networkHandler.Listen()) //А если не будет даты?
             {
-                devicesHandler.ProcessData(data);
-            }
+                deviceContext.ProcessData(data);
+            }       
         }
 
     }

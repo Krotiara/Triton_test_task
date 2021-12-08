@@ -12,12 +12,12 @@ namespace Triton_test_task.Tests
     public class UdpHandlerTests
     {
         UDPHandler udpHandler;
-        DevicesHandler<Device> devicesHandler;
+        DeviceContext deviceContext;
 
         public UdpHandlerTests()
         {
             udpHandler = new UDPHandler(62006, 62005);
-            devicesHandler = new DevicesHandler<Device>();
+            deviceContext = new DeviceContext();
         }
 
         [Fact]
@@ -31,9 +31,9 @@ namespace Triton_test_task.Tests
         [Fact]
         public void DataSendTest()
         {
-            devicesHandler.Add(1, DeviceByteMessagesConverter.GenerateTestDeviceValues(1, 10, 100));
-            Device device = devicesHandler.Get(1);
-            byte[] message = device.CreateMessage("LR");
+            int testId = 1;
+            deviceContext.ProcessData(DeviceByteMessagesConverter.GenerateTestDeviceValues(testId, 10, 100));
+            byte[] message = deviceContext.CreateMessage(1,"LR");
 
             int sendedBytes = udpHandler.Send(message);
 
@@ -45,9 +45,9 @@ namespace Triton_test_task.Tests
         {
             byte[] data = udpHandler.Receive();
 
-            devicesHandler.ProcessData(data);
+            deviceContext.ProcessData(data);
 
-            Assert.Single(devicesHandler.Devices);  
+            Assert.Single(deviceContext.Devices);  
             
         }
 
@@ -59,12 +59,12 @@ namespace Triton_test_task.Tests
                 { "lower threshold", "10" },
                 { "upper threshold", "200" } };
             
-            udpHandler.Send(device.CreateMessage("LW", parameters));
+            udpHandler.Send(deviceContext.CreateMessage(device.Id, "LW", parameters));
             byte[] answer = udpHandler.Receive();
 
             Assert.True(answer.Length == 12);
 
-            udpHandler.Send(device.CreateMessage("LR"));
+            udpHandler.Send(deviceContext.CreateMessage(device.Id, "LR"));
             answer = udpHandler.Receive();
 
             Assert.True(answer.Length == 12);
@@ -79,20 +79,20 @@ namespace Triton_test_task.Tests
                 { "lower threshold", "10" },
                 { "upper threshold", "200" } };
 
-            udpHandler.Send(device.CreateMessage("LW", parameters)); //И как тестить изменения?
+            udpHandler.Send(deviceContext.CreateMessage(device.Id, "LW", parameters));
             byte[] answer = udpHandler.Receive();
-            devicesHandler.ProcessData(answer);
+            deviceContext.ProcessData(answer);
 
-            Assert.True(device.Params["lower threshold"] == "10");
-            Assert.True(device.Params["upper threshold"] == "200");
+            Assert.True(device.LowerTheshold == 10);
+            Assert.True(device.UpperTheshold == 200);
         }
 
 
         private Device GetDeviceByFirstRecieve()
         {
             byte[] deviceData = udpHandler.Receive();
-            devicesHandler.ProcessData(deviceData);
-            Device device = devicesHandler.Devices.First().Value;
+            deviceContext.ProcessData(deviceData);
+            Device device = deviceContext.Devices.First().Value;
             return device;
         }
 

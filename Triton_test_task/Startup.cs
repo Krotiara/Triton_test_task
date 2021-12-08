@@ -30,7 +30,7 @@ namespace Triton_test_task
             {
                 return new UDPHandler(udpListenPort, udpSendPort);
             });
-            services.AddSingleton<IDevice, Device>();
+            services.AddSingleton<IDeviceContext, DeviceContext>();
             services.AddControllersWithViews();
         }
 
