@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Triton_test_task.Models
 {
-    public class DevicesController: Controller
+    public class DevicesController : Controller
     {
 
         private readonly INetworkHandler networkHandler;
@@ -17,6 +17,7 @@ namespace Triton_test_task.Models
         {
             this.networkHandler = networkHandler;
             this.deviceContext = deviceContext;
+            this.deviceContext.AddNewDeviceEvent += GetThresholds;
             Task.Run(() => ProcessDevicesMessages());
         }
 
@@ -32,24 +33,31 @@ namespace Triton_test_task.Models
         }
 
 
+        [HttpGet]
+        public void GetThresholds(int deviceId)
+        {
+            networkHandler.Send(deviceContext.CreateMessage(deviceId, "LR"));
+        }
 
         [HttpGet]
-        public IActionResult Get(int id)
+        public IActionResult ChangeThresholds()
         {
-            throw new  NotImplementedException();
-            //TODO мб без Id, т.к. ловить надо все
+            return PartialView("EditThresholdsView", deviceContext.Devices.Keys.ToList());
         }
 
         [HttpPost]
-        public IActionResult Post(int id, int lowerThreshold, int upperThreshold)
+        public void ChangeThresholds(int deviceId, int lowerThreshold, int upperThreshold)
         {
-            throw new NotImplementedException();
-            //TODO
+            networkHandler.Send(deviceContext.CreateMessage(deviceId, "LW",
+                new Dictionary<string, string>() {
+                   { "upper threshold", upperThreshold.ToString() },
+                   { "lower threshold", lowerThreshold.ToString()} }));
+            networkHandler.Send(deviceContext.CreateMessage(deviceId, "LR"));
         }
 
         private void ProcessDevicesMessages()
         {
-            foreach (byte[] data in networkHandler.Recieve()) //А если не будет даты?
+            foreach (byte[] data in networkHandler.Receive()) //А если не будет даты?
             {
                 if (data != null)
                     deviceContext.ProcessData(data);

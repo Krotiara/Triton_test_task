@@ -10,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
+    <div>
+        @Html.ActionLink("Change thesholds", "ChangeThresholds", "Devices")
+    </div>
     <div id="devicesTable">
         @{
             await Html.RenderPartialAsync("DevicesView", Model);
@@ -38,12 +41,11 @@
 <script>
     $(document).ready(function () {
         function RefreshPartial() {
-            //this will wait 3 seconds and then fire the load partial function
+            //this will wait13 seconds and then fire the load partial function
             setTimeout(function () {
                 loadPartialView();
-                //recall this function so that it will continue to loop
                 RefreshPartial();
-            }, 100);
+            }, 1000);
         }
         //initialize the loop
         RefreshPartial();

@@ -16,6 +16,8 @@ namespace Triton_test_task.Models
             Devices = new Dictionary<int, Device>();
         }
 
+        public event Action<int> AddNewDeviceEvent;
+
         public byte[] CreateMessage(int deviceId, string messageType, Dictionary<string, string> parameters = null)
         {
             switch (messageType)
@@ -37,7 +39,10 @@ namespace Triton_test_task.Models
         {
             int id = GetDeviceId(deviceData);
             if (!Devices.ContainsKey(id))
+            {
                 Devices[id] = new Device(id);
+                AddNewDeviceEvent.Invoke(id);
+            }
             ProcessMessageForDevice(id, deviceData); 
         }
 

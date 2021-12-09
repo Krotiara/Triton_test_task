@@ -52,7 +52,7 @@ namespace Triton_test_task.Models
            
         }
 
-        public IEnumerable<byte[]> Recieve()
+        public IEnumerable<byte[]> Receive()
         {
             byte[] dequeueRes;
 
