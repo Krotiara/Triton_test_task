@@ -41,7 +41,8 @@ namespace Triton_test_task.Models
             if (!Devices.ContainsKey(id))
             {
                 Devices[id] = new Device(id);
-                AddNewDeviceEvent.Invoke(id);
+                if (AddNewDeviceEvent != null)
+                    AddNewDeviceEvent.Invoke(id);
             }
             ProcessMessageForDevice(id, deviceData); 
         }

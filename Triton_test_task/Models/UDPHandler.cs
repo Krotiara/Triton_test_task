@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Triton_test_task.Models
 {
-    public class UDPHandler: INetworkHandler
+    public class UDPHandler: INetworkHandler, IDisposable
     {
         public int ListenPort { get; }
         public int SendPort { get; }
@@ -30,8 +30,7 @@ namespace Triton_test_task.Models
             ListenEndPoint = new IPEndPoint(IPAddress.Loopback, listenPort);
             SendEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
             buffer = new Queue<byte[]>();
-            listener = new UdpClient(ListenPort);
-            Listen();
+            listener = new UdpClient(ListenPort);      
         }
 
 
@@ -54,6 +53,7 @@ namespace Triton_test_task.Models
 
         public IEnumerable<byte[]> Receive()
         {
+            Listen();
             byte[] dequeueRes;
 
             while(buffer.TryDequeue(out dequeueRes))
@@ -66,6 +66,7 @@ namespace Triton_test_task.Models
         public void StopListen()
         {
             isListen = false;
+            buffer.Clear();
         }
 
 
@@ -75,6 +76,12 @@ namespace Triton_test_task.Models
             {            
                 return sender.Send(data, data.Length, SendEndPoint);
             }
+        }
+
+        public void Dispose()
+        {
+            listener.Close();
+            StopListen();
         }
     }
 }

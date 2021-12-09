@@ -58,7 +58,7 @@ namespace Triton_test_task.Models
 
         private void ProcessDevicesMessages()
         {
-            foreach (byte[] data in networkHandler.Receive()) //А если не будет даты?
+            foreach (byte[] data in networkHandler.Receive())
             {
                 if (data != null)
                     deviceContext.ProcessData(data);
