@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +16,19 @@ namespace Triton_test_task.Models
             Id = id;
         }
 
+        
         public int Id { get; set; }
 
+        [DisplayName("Parameter one")]
         public short ParameterOne { get; set; }
 
+        [DisplayName("Parameter two")]
         public short ParameterTwo { get; set; }
 
+        [DisplayName("Lower theshold")]
         public short LowerTheshold { get; set; }
 
+        [DisplayName("Upper theshold")]
         public short UpperTheshold { get; set; }
 
         public bool IsParameterTwoAcceptable => ParameterTwo >= LowerTheshold && ParameterTwo <= UpperTheshold;
