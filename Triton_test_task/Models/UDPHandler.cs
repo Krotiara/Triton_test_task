@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,7 +15,13 @@ namespace Triton_test_task.Models
         public IPEndPoint ListenEndPoint { get; }
         public IPEndPoint SendEndPoint { get; }
 
+        private UdpClient listener;
+
         private bool isListen;
+
+        private Queue<byte[]> buffer;
+
+      
 
         public UDPHandler(int listenPort, int sendPort)
         {
@@ -22,26 +29,39 @@ namespace Triton_test_task.Models
             this.SendPort = sendPort;
             ListenEndPoint = new IPEndPoint(IPAddress.Loopback, listenPort);
             SendEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
+            buffer = new Queue<byte[]>();
+            listener = new UdpClient(ListenPort);
+            Listen();
         }
 
 
-        public IEnumerable<byte[]> Listen()
+        private async void Listen()
         {
             isListen = true;
-            while (isListen)
+            await Task.Run(async () =>
             {
-                yield return Receive();
+                using (listener)
+                {
+                    while (isListen)
+                    {
+                        UdpReceiveResult reseivedResult = await listener.ReceiveAsync();
+                        buffer.Enqueue(reseivedResult.Buffer);
+                    }
+                }
+            });
+           
+        }
+
+        public IEnumerable<byte[]> Recieve()
+        {
+            byte[] dequeueRes;
+
+            while(buffer.TryDequeue(out dequeueRes))
+            {
+                yield return dequeueRes;
             }
         }
 
-        public byte[] Receive()
-        {
-            using (UdpClient listener = new UdpClient(ListenPort))
-            {
-                IPEndPoint listenEndPoint = ListenEndPoint;
-                return listener.Receive(ref listenEndPoint);
-            }
-        }
 
         public void StopListen()
         {

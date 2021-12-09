@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Triton_test_task.Models
@@ -16,15 +17,21 @@ namespace Triton_test_task.Models
         {
             this.networkHandler = networkHandler;
             this.deviceContext = deviceContext;
-            Task.Run(() => ProcessTheDeviceMessage());
+            Task.Run(() => ProcessDevicesMessages());
         }
 
         public IActionResult Index()
         {
-            return View("Index");
+            return View("Index", deviceContext.Devices);
         }
 
-       
+
+        public IActionResult GetDevicesTable()
+        {
+            return PartialView("DevicesView", deviceContext.Devices);
+        }
+
+
 
         [HttpGet]
         public IActionResult Get(int id)
@@ -40,11 +47,12 @@ namespace Triton_test_task.Models
             //TODO
         }
 
-        private void ProcessTheDeviceMessage()
+        private void ProcessDevicesMessages()
         {
-            foreach (byte[] data in networkHandler.Listen()) //А если не будет даты?
+            foreach (byte[] data in networkHandler.Recieve()) //А если не будет даты?
             {
-                deviceContext.ProcessData(data);
+                if (data != null)
+                    deviceContext.ProcessData(data);
             }       
         }
 

@@ -7,7 +7,7 @@ namespace Triton_test_task.Models
 {
     public interface INetworkHandler
     {
-        public IEnumerable<byte[]> Listen();
+        public IEnumerable<byte[]> Recieve();
 
         /// <summary>
         /// 

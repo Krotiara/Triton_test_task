@@ -1,11 +1,52 @@
-﻿@model List<Device>
+﻿@model Dictionary<int, Device>
 
 @{
     ViewData["Title"] = "Devices";
-
 }
 
-<div class="text-center">
-    <h1 class="display-4">There are no devices</h1> 
-</div>
+
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="devicesTable">
+        @{
+            await Html.RenderPartialAsync("DevicesView", Model);
+        }
+    </div>
+
+
+</body>
+</html>
+
+
+<script>
+    function loadPartialView() {
+        $.ajax({
+            url: '@Url.Action("GetDevicesTable", "Devices")',
+            type: 'post',
+            cache: false,
+            async: true,
+            success: function (result) {
+                $('#devicesTable').html(result);
+            }
+        });
     }
+
+</script>
+<script>
+    $(document).ready(function () {
+        function RefreshPartial() {
+            //this will wait 3 seconds and then fire the load partial function
+            setTimeout(function () {
+                loadPartialView();
+                //recall this function so that it will continue to loop
+                RefreshPartial();
+            }, 100);
+        }
+        //initialize the loop
+        RefreshPartial();
+    });
+</script>
+

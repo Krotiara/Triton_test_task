@@ -1,0 +1,55 @@
+﻿@model Dictionary<int, Device>
+
+    <div id="devices">
+        @if (Model.Count > 0)
+        {
+            <table class="table table-bordered">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].ParameterOne)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].ParameterTwo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].LowerTheshold)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].UpperTheshold)
+                    </th>
+                </tr>
+                @foreach (Device device in Model.Values)
+                {
+                    <tr>
+                        <td>
+                            @device.Id
+                        </td>
+                        <td>
+                            @device.ParameterOne
+                        </td>
+                        <td>
+                            @device.ParameterTwo
+                        </td>
+                        <td>
+                            @device.LowerTheshold
+                        </td>
+                        <td>
+                            @device.UpperTheshold
+                        </td>
+                        <td>
+                            @Html.ActionLink("Change thesholds", "EditStudent", "Home", new { id = device.Id })
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div class="text-center">
+                <h1 class="display-4">There are no devices</h1>
+            </div>
+        }
+    </div>
