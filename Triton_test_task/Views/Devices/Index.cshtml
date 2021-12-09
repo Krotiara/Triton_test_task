@@ -10,8 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
-    <div>
-        @Html.ActionLink("Change thesholds", "ChangeThresholds", "Devices")
+    <a href="#" class="EditDevice" onclick="loadEditThresholdsView()">Change thresholds</a>
+    <div id="editDevices">
+
     </div>
     <div id="devicesTable">
         @{
@@ -39,6 +40,19 @@
 
 </script>
 <script>
+    function loadEditThresholdsView() {
+        $.ajax({
+            url: '@Url.Action("ChangeThresholds", "Devices")',
+            type: 'get',
+            cache: false,
+            async: true,
+            success: function (result) {
+                $('#editDevices').html(result);
+            }
+        });
+    }
+</script>
+<script>
     $(document).ready(function () {
         function RefreshPartial() {
             //this will wait13 seconds and then fire the load partial function
@@ -51,4 +65,5 @@
         RefreshPartial();
     });
 </script>
+
 

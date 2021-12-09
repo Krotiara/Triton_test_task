@@ -46,13 +46,14 @@ namespace Triton_test_task.Models
         }
 
         [HttpPost]
-        public void ChangeThresholds(int deviceId, int lowerThreshold, int upperThreshold)
+        public IActionResult ChangeThresholds(int deviceId, int lowerThreshold, int upperThreshold)
         {
             networkHandler.Send(deviceContext.CreateMessage(deviceId, "LW",
                 new Dictionary<string, string>() {
                    { "upper threshold", upperThreshold.ToString() },
                    { "lower threshold", lowerThreshold.ToString()} }));
             networkHandler.Send(deviceContext.CreateMessage(deviceId, "LR"));
+            return RedirectToAction("Index");
         }
 
         private void ProcessDevicesMessages()
