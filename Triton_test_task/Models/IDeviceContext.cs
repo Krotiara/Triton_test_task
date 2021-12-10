@@ -15,6 +15,6 @@ namespace Triton_test_task.Models
 
         public void ProcessMessageForDevice(int deviceId, byte[] deviceData);
 
-        public event Action<int> AddNewDeviceEvent;
+        public event Action<int> OnAddNewDeviceEvent;
     }
 }

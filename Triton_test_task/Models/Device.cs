@@ -33,6 +33,8 @@ namespace Triton_test_task.Models
 
         public bool IsParameterTwoAcceptable => ParameterTwo >= LowerTheshold && ParameterTwo <= UpperTheshold;
 
+        public bool IsThresholdsDontSet => LowerTheshold == 0 && UpperTheshold == 0;
+
     }
 
    

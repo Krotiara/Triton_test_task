@@ -16,29 +16,22 @@ namespace Triton_test_task.Models
         public DevicesController(INetworkHandler networkHandler, IDeviceContext deviceContext)
         {
             this.networkHandler = networkHandler;
-            this.deviceContext = deviceContext;
-            this.deviceContext.AddNewDeviceEvent += GetThresholds;
-            this.networkHandler.OnRecieve += deviceContext.ProcessData;
-            this.networkHandler.BeginReceive();
+            this.deviceContext = deviceContext;    
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View("Index", deviceContext.Devices);
         }
 
 
+        [HttpGet]
         public IActionResult GetDevicesTable()
         {
             return PartialView("DevicesView", deviceContext.Devices);
         }
 
-
-        [HttpGet]
-        public void GetThresholds(int deviceId)
-        {
-            networkHandler.Send(deviceContext.CreateMessage(deviceId, "LR"));
-        }
 
         [HttpGet]
         public IActionResult ChangeThresholds()

@@ -26,11 +26,19 @@ namespace Triton_test_task
         {
             int udpListenPort = Configuration.GetSection("Ports").GetValue<int>("Listen");
             int udpSendPort = Configuration.GetSection("Ports").GetValue<int>("Send");
+
+            UDPHandler handler = new UDPHandler(udpListenPort, udpSendPort);
+            DeviceContext deviceContext = new DeviceContext();
+            handler.OnRecieve += deviceContext.ProcessData;
+            deviceContext.OnAddNewDeviceEvent += ((deviceId) => handler.Send(deviceContext.CreateMessage(deviceId, "LR"))); //Бизнеслогика..
+
             services.AddSingleton<INetworkHandler, UDPHandler>(servicesProvider =>
             {
-                return new UDPHandler(udpListenPort, udpSendPort);
+                return handler;
             });
-            services.AddSingleton<IDeviceContext, DeviceContext>();
+            services.AddSingleton<IDeviceContext, DeviceContext>(servicesProvider =>
+            { return deviceContext; });
+            
             services.AddControllersWithViews();
         }
 

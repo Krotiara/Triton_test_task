@@ -16,7 +16,7 @@ namespace Triton_test_task.Models
             Devices = new Dictionary<int, Device>();
         }
 
-        public event Action<int> AddNewDeviceEvent;
+        public event Action<int> OnAddNewDeviceEvent;
 
         public byte[] CreateMessage(int deviceId, string messageType, Dictionary<string, string> parameters = null)
         {
@@ -42,8 +42,8 @@ namespace Triton_test_task.Models
             if (!Devices.ContainsKey(id))
             {
                 Devices[id] = new Device(id);
-                if (AddNewDeviceEvent != null)
-                    AddNewDeviceEvent.Invoke(id);
+                if (OnAddNewDeviceEvent != null)
+                    OnAddNewDeviceEvent.Invoke(id);
             }
             try
             {

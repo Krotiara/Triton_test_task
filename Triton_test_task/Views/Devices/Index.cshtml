@@ -15,9 +15,7 @@
 
     </div>
     <div id="devicesTable">
-        @{
-            await Html.RenderPartialAsync("DevicesView", Model);
-        }
+       
     </div>
 
 
@@ -29,7 +27,7 @@
     function loadPartialView() {
         $.ajax({
             url: '@Url.Action("GetDevicesTable", "Devices")',
-            type: 'post',
+            type: 'get',
             cache: false,
             async: true,
             success: function (result) {

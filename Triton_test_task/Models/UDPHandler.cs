@@ -29,7 +29,7 @@ namespace Triton_test_task.Models
             ListenEndPoint = new IPEndPoint(IPAddress.Loopback, listenPort);
             SendEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
             listener = new UdpClient(ListenPort);
-
+            BeginReceive();
         }
 
 
