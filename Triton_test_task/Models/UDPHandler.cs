@@ -17,11 +17,10 @@ namespace Triton_test_task.Models
 
         private UdpClient listener;
 
-        private bool isListen;
+        private bool isListen = true;
+  
 
-        private Queue<byte[]> buffer;
-
-      
+        public event Action<byte[]> OnRecieve;
 
         public UDPHandler(int listenPort, int sendPort)
         {
@@ -29,8 +28,8 @@ namespace Triton_test_task.Models
             this.SendPort = sendPort;
             ListenEndPoint = new IPEndPoint(IPAddress.Loopback, listenPort);
             SendEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
-            buffer = new Queue<byte[]>();
-            listener = new UdpClient(ListenPort);      
+            listener = new UdpClient(ListenPort);
+
         }
 
 
@@ -44,29 +43,21 @@ namespace Triton_test_task.Models
                     while (isListen)
                     {
                         UdpReceiveResult reseivedResult = await listener.ReceiveAsync();
-                        buffer.Enqueue(reseivedResult.Buffer);
+                        OnRecieve.Invoke(reseivedResult.Buffer);
                     }
                 }
             });
-           
         }
 
-        public IEnumerable<byte[]> Receive()
+        public void BeginReceive()
         {
             Listen();
-            byte[] dequeueRes;
-
-            while(buffer.TryDequeue(out dequeueRes))
-            {
-                yield return dequeueRes;
-            }
         }
 
 
-        public void StopListen()
+        private void StopListen()
         {
             isListen = false;
-            buffer.Clear();
         }
 
 

@@ -18,7 +18,8 @@ namespace Triton_test_task.Models
             this.networkHandler = networkHandler;
             this.deviceContext = deviceContext;
             this.deviceContext.AddNewDeviceEvent += GetThresholds;
-            Task.Run(() => ProcessDevicesMessages());
+            this.networkHandler.OnRecieve += deviceContext.ProcessData;
+            this.networkHandler.BeginReceive();
         }
 
         public IActionResult Index()
@@ -55,15 +56,5 @@ namespace Triton_test_task.Models
             networkHandler.Send(deviceContext.CreateMessage(deviceId, "LR"));
             return RedirectToAction("Index");
         }
-
-        private void ProcessDevicesMessages()
-        {
-            foreach (byte[] data in networkHandler.Receive())
-            {
-                if (data != null)
-                    deviceContext.ProcessData(data);
-            }       
-        }
-
     }
 }

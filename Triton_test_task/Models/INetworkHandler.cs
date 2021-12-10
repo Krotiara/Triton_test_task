@@ -7,7 +7,7 @@ namespace Triton_test_task.Models
 {
     public interface INetworkHandler
     {
-        public IEnumerable<byte[]> Receive();
+        public void BeginReceive();
 
         /// <summary>
         /// 
@@ -15,5 +15,7 @@ namespace Triton_test_task.Models
         /// <param name="data"></param>
         /// <returns>Return number of sended bytes</returns>
         public int Send(byte[] data);
+
+        public event Action<byte[]> OnRecieve;
     }
 }

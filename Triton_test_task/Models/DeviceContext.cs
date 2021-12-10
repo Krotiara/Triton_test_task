@@ -37,6 +37,7 @@ namespace Triton_test_task.Models
 
         public void ProcessData(byte[] deviceData)
         {
+            if (deviceData == null) return;
             int id = GetDeviceId(deviceData);
             if (!Devices.ContainsKey(id))
             {
@@ -44,7 +45,14 @@ namespace Triton_test_task.Models
                 if (AddNewDeviceEvent != null)
                     AddNewDeviceEvent.Invoke(id);
             }
-            ProcessMessageForDevice(id, deviceData); 
+            try
+            {
+                ProcessMessageForDevice(id, deviceData);
+            }
+            catch (MessageAnswerException e)
+            {
+                return; //TODO notification
+            }
         }
 
         public void ProcessMessageForDevice(int deviceId, byte[] deviceData)
