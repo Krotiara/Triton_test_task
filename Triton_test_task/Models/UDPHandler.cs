@@ -54,13 +54,6 @@ namespace Triton_test_task.Models
             Listen();
         }
 
-
-        private void StopListen()
-        {
-            isListen = false;
-        }
-
-
         public int Send(byte[] data)
         {    
             using (UdpClient sender = new UdpClient())
@@ -71,8 +64,13 @@ namespace Triton_test_task.Models
 
         public void Dispose()
         {
-            listener.Close();
-            StopListen();
+            StopReceive();
+            listener.Close();    
+        }
+
+        public void StopReceive()
+        {
+            isListen = false;
         }
     }
 }

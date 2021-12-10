@@ -9,6 +9,8 @@ namespace Triton_test_task.Models
     {
         public void BeginReceive();
 
+        public void StopReceive();
+
         /// <summary>
         /// 
         /// </summary>
